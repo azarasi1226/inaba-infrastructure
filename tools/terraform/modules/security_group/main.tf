@@ -1,14 +1,19 @@
-#セキュリティグループ
+locals {
+    //リソース名
+    resource_name = "${var.resrouce_prefix}-${var.service-name}-ecr"
+}
+
+# セキュリティグループ
 resource "aws_security_group" "this" {
-  name   = "${var.resource_prefix}-${var.usage_name}-sg"
+  name   = "${local.resource_name}-sg"
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "${var.resource_prefix}-${var.usage_name}-sg"
+    Name = "${local.resource_name}-sg"
   }
 }
 
-#インバウンドルール
+# インバウンドルール
 resource "aws_security_group_rule" "ingress_example" {
   type              = "ingress"
   from_port         = var.port
@@ -18,7 +23,7 @@ resource "aws_security_group_rule" "ingress_example" {
   security_group_id = aws_security_group.this.id
 }
 
-#アウトバウンドルール(全通信を許可)
+# アウトバウンドルール(全通信を許可)
 resource "aws_security_group_rule" "egress_example" {
   type              = "egress"
   from_port         = "0"
