@@ -11,7 +11,7 @@ resource "aws_vpc" "this" {
     enable_dns_hostnames = true
 
     tags = {
-        Name = "${var.environment_name}-${var.project_name}-vpc"
+        Name = "${var.resrouce_prefix}-vpc"
     }
 }
 
@@ -31,7 +31,7 @@ resource "aws_subnet" "management_subnets" {
     map_public_ip_on_launch = true
 
     tags = {
-        Name = "${var.environment_name}_${var.project_name}_management_public_subnet_${count.index}"
+        Name = "${var.resrouce_prefix}_management_public_subnet_${count.index}"
     }
 }
 
@@ -46,7 +46,7 @@ resource "aws_subnet" "ingress_subnets" {
     map_public_ip_on_launch = true
     
     tags = {
-        Name = "${var.environment_name}_${var.project_name}_ingress_public_subnet_${count.index}"
+        Name = "${var.resrouce_prefix}_ingress_public_subnet_${count.index}"
     }
 }
 
@@ -59,7 +59,7 @@ resource "aws_subnet" "container_subnets" {
     availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
 
     tags = {
-        Name = "${var.environment_name}_${var.project_name}_container_private_subnet_${count.index}"
+        Name = "${var.resrouce_prefix}_container_private_subnet_${count.index}"
     }
 }
 
@@ -72,7 +72,7 @@ resource "aws_subnet" "egress_subnets" {
     availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
 
     tags = {
-        Name = "${var.environment_name}_${var.project_name}_egress_private_subnet_${count.index}"
+        Name = "${var.resrouce_prefix}_egress_private_subnet_${count.index}"
     }
 }
 
@@ -81,7 +81,7 @@ resource "aws_internet_gateway" "ig" {
     vpc_id = aws_vpc.this.id
 
     tags = {
-        Name = "${var.environment_name}_${var.project_name}_internet-gateway"
+        Name = "${var.resrouce_prefix}_internet-gateway"
     }
 }
 
@@ -90,7 +90,7 @@ resource "aws_route_table" "public_route_table" {
     vpc_id = aws_vpc.this.id
     
     tags = {
-        Name = "${var.environment_name}_${var.project_name}_public_route-table"
+        Name = "${var.resrouce_prefix}_public_route-table"
     }
 }
 
@@ -110,7 +110,7 @@ resource "aws_route_table_association" "management-subnet-associations" {
 }
 resource "aws_route_table_association" "ingress-subnet-associations" {
     count = local.az_count
-    
+
     subnet_id      = aws_subnet.ingress_subnets[count.index].id
     route_table_id = aws_route_table.public_route_table.id
 }
@@ -129,7 +129,7 @@ resource "aws_vpc_endpoint" "ecr" {
     private_dns_enabled = true
 
     tags =  {
-        Name = "${var.environment_name}_${var.project_name}_ecr_endpoint"
+        Name = "${var.resrouce_prefix}_ecr_endpoint"
     }
 }
 
@@ -147,7 +147,7 @@ resource "aws_vpc_endpoint" "dkr" {
     private_dns_enabled = true
 
     tags =  {
-        Name = "${var.environment_name}_${var.project_name}_dkr_endpoint"
+        Name = "${var.resrouce_prefix}_dkr_endpoint"
     }
 }
 
@@ -165,6 +165,6 @@ resource "aws_vpc_endpoint" "logs" {
     private_dns_enabled = true
 
     tags =  {
-        Name = "${var.environment_name}_${var.project_name}_logs_endpoint"
+        Name = "${var.resrouce_prefix}_logs_endpoint"
     }
 }
