@@ -1,6 +1,6 @@
 locals {
     //リソース名
-    resource_name = "${var.resrouce_prefix}-${var.service-name}-ecr"
+    resource_name = "${var.resource_prefix}-${var.usage_name}-ecr"
 }
 
 # セキュリティグループ

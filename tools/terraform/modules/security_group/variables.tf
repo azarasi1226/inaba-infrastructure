@@ -5,6 +5,7 @@ variable "resource_prefix" {
 
 variable "usage_name" {
   description = "リソース名に含める用途名"
+  type = string
 }
 
 variable "vpc_id" {

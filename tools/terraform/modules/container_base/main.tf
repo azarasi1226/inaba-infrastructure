@@ -1,3 +1,3 @@
 resource "aws_ecs_cluster" "this" {
-    naem = "${var.resrouce_prefix}-cluster"
+    name = "${var.resource_prefix}-cluster"
 }
