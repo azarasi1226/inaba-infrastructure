@@ -20,33 +20,31 @@ data "aws_availability_zones" "availability_zone" {
   state = "available"
 }
 
-# 管理用パブリックサブネット(192.168.0.0 ~ 192.168.2.0)
-resource "aws_subnet" "management_subnets" {
-    count = local.az_count
-
+# 管理用パブリックサブネット(192.168.0.0)
+resource "aws_subnet" "management_subnet" {
     vpc_id            = aws_vpc.this.id
-    cidr_block        = "192.168.${count.index}.0/24"
-    availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
+    cidr_block        = "192.168.0.0/24"
+    availability_zone = data.aws_availability_zones.availability_zone.names[0]
 
     map_public_ip_on_launch = true
 
     tags = {
-        Name = "${var.resource_prefix}_management_public_subnet_${count.index}"
+        Name = "${var.resource_prefix}-management-public-subnet-${count.index}"
     }
 }
 
-# ingress用パブリックサブネット(192.168.3.0 ~ 192.168.5.0)
+# ingress用パブリックサブネット(192.168.1.0 ~ 192.168.3.0)
 resource "aws_subnet" "ingress_subnets" {
     count = local.az_count
 
     vpc_id            = aws_vpc.this.id
-    cidr_block        = "192.168.${3 + count.index}.0/24"
+    cidr_block        = "192.168.${1 + count.index}.0/24"
     availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
 
     map_public_ip_on_launch = true
     
     tags = {
-        Name = "${var.resource_prefix}_ingress_public_subnet_${count.index}"
+        Name = "${var.resource_prefix}-ingress-public-subnet-${count.index}"
     }
 }
 
@@ -59,7 +57,7 @@ resource "aws_subnet" "container_subnets" {
     availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
 
     tags = {
-        Name = "${var.resource_prefix}_container_private_subnet_${count.index}"
+        Name = "${var.resource_prefix}-container-private-subnet-${count.index}"
     }
 }
 
@@ -72,7 +70,7 @@ resource "aws_subnet" "egress_subnets" {
     availability_zone = data.aws_availability_zones.availability_zone.names[count.index]
 
     tags = {
-        Name = "${var.resource_prefix}_egress_private_subnet_${count.index}"
+        Name = "${var.resource_prefix}-egress-private-subnet-${count.index}"
     }
 }
 
@@ -81,31 +79,38 @@ resource "aws_internet_gateway" "ig" {
     vpc_id = aws_vpc.this.id
 
     tags = {
-        Name = "${var.resource_prefix}_internet-gateway"
+        Name = "${var.resource_prefix}-internet-gateway"
     }
 }
 
-# パブリック用ルートテーブル
+# パブリックサブネット用ルートテーブル
 resource "aws_route_table" "public_route_table" {
     vpc_id = aws_vpc.this.id
     
     tags = {
-        Name = "${var.resource_prefix}_public_route-table"
+        Name = "${var.resource_prefix}-public-route-table"
     }
 }
 
-# パブリックegress用ルート
+# パブリックサブネット用ルート
 resource "aws_route" "public_route" {
   route_table_id         = aws_route_table.public_route_table.id
   gateway_id             = aws_internet_gateway.ig.id
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# パブリックなサブネットに↑で作ったルートテーブルを紐づける
-resource "aws_route_table_association" "management-subnet-associations" {
-    count = local.az_count
+# コンテナ用サブネットルートテーブル(今のところNATゲートウェイ使ってないからVPCエンドポイントにしか用途がない)
+resource "aws_route_table" "container_private_route_table" {
+    vpc_id = aws_vpc.this.id
 
-    subnet_id      = aws_subnet.management_subnets[count.index].id
+    tags = {
+        Name = "${var.resoruce_prefix}-container-public-route-table"
+    }
+}
+
+# ルートテーブルとサブネットの紐づけ
+resource "aws_route_table_association" "management-subnet-associations" {
+    subnet_id      = aws_subnet.management_subnet.id
     route_table_id = aws_route_table.public_route_table.id
 }
 resource "aws_route_table_association" "ingress-subnet-associations" {
@@ -114,11 +119,19 @@ resource "aws_route_table_association" "ingress-subnet-associations" {
     subnet_id      = aws_subnet.ingress_subnets[count.index].id
     route_table_id = aws_route_table.public_route_table.id
 }
+resource "aws_route_table_association" "container-subnet-associations" {
+    count = local.az_count
+    
+    subnet_id = aws_subnet.container_subnets[count.index].id
+    route_table_id = aws_route_table.container_private_route_table
+}
+
+data "aws_region" "current" {}
 
 # ECR用VPCエンドポイント(awc ecr get-login-password等のコマンドで使用)
 resource "aws_vpc_endpoint" "ecr" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.ap-northeast-1.ecr.api"
+    service_name = "com.amazonaws.${data.aws_region.current}.ecr.api"
     vpc_endpoint_type = "Interface"
     subnet_ids = [
         aws_subnet.egress_subnets[0].id,
@@ -129,14 +142,14 @@ resource "aws_vpc_endpoint" "ecr" {
     private_dns_enabled = true
 
     tags =  {
-        Name = "${var.resource_prefix}_ecr_endpoint"
+        Name = "${var.resource_prefix}-ecr-endpoint"
     }
 }
 
 # ECR用VPCエンドポイント(docker image push等のコマンドで使用)
 resource "aws_vpc_endpoint" "dkr" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.ap-northeast-1.ecr.dkr"
+    service_name = "com.amazonaws.${data.aws_region.current}.ecr.dkr"
     vpc_endpoint_type = "Interface"
     subnet_ids = [
         aws_subnet.egress_subnets[0].id,
@@ -147,14 +160,24 @@ resource "aws_vpc_endpoint" "dkr" {
     private_dns_enabled = true
 
     tags =  {
-        Name = "${var.resource_prefix}_dkr_endpoint"
+        Name = "${var.resource_prefix}-dkr-endpoint"
     }
+}
+
+# ECR用VPCエンドポイント(実はECRのImageはS3に実態を格納してるんだZE!)
+resource "aws_vpc_endpoint" "s3" {
+    vpc_id = aws_vpc.this.id
+    service_name = "com.amazonaws.${data.aws_region.current}.s3"
+    route_table_ids = [
+        aws_route_table.public_route_table.id,
+        aws_route_table.container_private_route_table
+    ]
 }
 
 # CloudWatch Logs用VPCエンドポイント
 resource "aws_vpc_endpoint" "logs" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.ap-northeast-1.logs"
+    service_name = "com.amazonaws.${data.aws_region.current}.logs"
     vpc_endpoint_type = "Interface"
     subnet_ids = [
         aws_subnet.egress_subnets[0].id,
@@ -165,6 +188,6 @@ resource "aws_vpc_endpoint" "logs" {
     private_dns_enabled = true
 
     tags =  {
-        Name = "${var.resource_prefix}_logs_endpoint"
+        Name = "${var.resource_prefix}-logs-endpoint"
     }
 }
