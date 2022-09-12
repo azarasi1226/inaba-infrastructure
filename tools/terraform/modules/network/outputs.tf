@@ -6,19 +6,15 @@ output "vpc_arn" {
     value = aws_vpc.this.arn
 }
 
+output "management_subnets_id" {
+    value = aws_subnet.management_subnet.id
+}
+
 output "container_private_subnet_ids" {
     value = [
         aws_subnet.container_subnets[0].id,
         aws_subnet.container_subnets[1].id,
         aws_subnet.container_subnets[2].id
-    ]
-}
-
-output "management_subnets_ids" {
-    value = [
-        aws_subnet.management_subnets[0].id,
-        aws_subnet.management_subnets[1].id,
-        aws_subnet.management_subnets[2].id,
     ]
 }
 

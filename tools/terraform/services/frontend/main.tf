@@ -1,3 +1,7 @@
+locals{
+  service_name = "frontend"
+}
+
 # 継承元ポリシー(初期でECSタスクにアタッチされるポリシー)
 data "aws_iam_policy" "ecs_task_execution_role_policy" {
     arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -21,7 +25,7 @@ module "ecs_task_execution_role" {
     source = "../../modules/iam_role"
 
     resource_prefix = var.resource_prefix
-    usage_name = "frontend-task-execution"
+    usage_name = "${local.service_name}-task-execution"
     identifier = "ecs-tasks.amazonaws.com"
     policy = data.aws_iam_policy_document.ecs_task_execution.json
 }
@@ -42,14 +46,14 @@ module "ecs_task_role" {
     source = "../../modules/iam_role"
 
     resource_prefix = var.resource_prefix
-    usage_name = "frontend-task"
+    usage_name = "${local.service_name}-task"
     identifier = "ecs-tasks.amazonaws.com"
     policy = data.aws_iam_policy_document.ecs_task.json
 }
 
 # ECSタスク定義
 resource "aws_ecs_task_definition" "this"{
-    family = "${var.resource_prefix}-frontend-task"
+    family = "${var.resource_prefix}-${local.service_name}-task"
     requires_compatibilities = ["FARGATE"]
     network_mode = "awsvpc"
     cpu  = "256"

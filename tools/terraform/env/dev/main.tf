@@ -16,6 +16,15 @@ module "container_base" {
     resource_prefix = local.resource_prefix
 }
 
+# 踏み台サーバー
+module "bastion" {
+    source = "../../modules/bastion"
+
+    resource_prefix = local.resource_prefix
+    vpc_id = module.network.vpc_id
+    subnet_id = module.network.management_subnets_id
+}
+
 # フロントエンド
 module "frontend" {
     source = "../../services/frontend"

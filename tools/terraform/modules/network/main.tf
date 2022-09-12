@@ -29,7 +29,7 @@ resource "aws_subnet" "management_subnet" {
     map_public_ip_on_launch = true
 
     tags = {
-        Name = "${var.resource_prefix}-management-public-subnet-${count.index}"
+        Name = "${var.resource_prefix}-management-public-subnet"
     }
 }
 
@@ -104,7 +104,7 @@ resource "aws_route_table" "container_private_route_table" {
     vpc_id = aws_vpc.this.id
 
     tags = {
-        Name = "${var.resoruce_prefix}-container-public-route-table"
+        Name = "${var.resource_prefix}-container-public-route-table"
     }
 }
 
@@ -123,7 +123,7 @@ resource "aws_route_table_association" "container-subnet-associations" {
     count = local.az_count
     
     subnet_id = aws_subnet.container_subnets[count.index].id
-    route_table_id = aws_route_table.container_private_route_table
+    route_table_id = aws_route_table.container_private_route_table.id
 }
 
 data "aws_region" "current" {}
@@ -131,7 +131,7 @@ data "aws_region" "current" {}
 # ECR用VPCエンドポイント(awc ecr get-login-password等のコマンドで使用)
 resource "aws_vpc_endpoint" "ecr" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.${data.aws_region.current}.ecr.api"
+    service_name = "com.amazonaws.${data.aws_region.current.name}.ecr.api"
     vpc_endpoint_type = "Interface"
     subnet_ids = [
         aws_subnet.egress_subnets[0].id,
@@ -149,7 +149,7 @@ resource "aws_vpc_endpoint" "ecr" {
 # ECR用VPCエンドポイント(docker image push等のコマンドで使用)
 resource "aws_vpc_endpoint" "dkr" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.${data.aws_region.current}.ecr.dkr"
+    service_name = "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"
     vpc_endpoint_type = "Interface"
     subnet_ids = [
         aws_subnet.egress_subnets[0].id,
@@ -167,10 +167,10 @@ resource "aws_vpc_endpoint" "dkr" {
 # ECR用VPCエンドポイント(実はECRのImageはS3に実態を格納してるんだZE!)
 resource "aws_vpc_endpoint" "s3" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.${data.aws_region.current}.s3"
+    service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
     route_table_ids = [
         aws_route_table.public_route_table.id,
-        aws_route_table.container_private_route_table
+        aws_route_table.container_private_route_table.id
     ]
 
     tags = {
@@ -181,7 +181,7 @@ resource "aws_vpc_endpoint" "s3" {
 # CloudWatch Logs用VPCエンドポイント
 resource "aws_vpc_endpoint" "logs" {
     vpc_id = aws_vpc.this.id
-    service_name = "com.amazonaws.${data.aws_region.current}.logs"
+    service_name = "com.amazonaws.${data.aws_region.current.name}.logs"
     vpc_endpoint_type = "Interface"
     subnet_ids = [
         aws_subnet.egress_subnets[0].id,
