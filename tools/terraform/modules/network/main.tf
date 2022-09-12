@@ -172,6 +172,10 @@ resource "aws_vpc_endpoint" "s3" {
         aws_route_table.public_route_table.id,
         aws_route_table.container_private_route_table
     ]
+
+    tags = {
+        Name = "${var.resource_prefix}-s3-endpoint"
+    }
 }
 
 # CloudWatch Logs用VPCエンドポイント
