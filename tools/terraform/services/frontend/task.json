@@ -1,7 +1,7 @@
 [
     {
-        "name": "frontend",
-        "image": "nginx:latest",
+        "name": "${service_name}",
+        "image": "${image_url}",
         "essential": true,
         "portMappings": [
             {

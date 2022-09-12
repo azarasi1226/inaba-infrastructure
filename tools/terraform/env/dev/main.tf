@@ -31,6 +31,7 @@ module "frontend" {
 
     resource_prefix = local.resource_prefix
     vpc_id = module.network.vpc_id
+    vpc_cidr = module.network.vpc_cidr
     cluster_arn = module.container_base.ecs_cluster_arn
     container_private_subnet_ids = module.network.container_private_subnet_ids
     alb_public_subnet_ids = module.network.ingress_public_subnet_ids
