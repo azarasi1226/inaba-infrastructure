@@ -36,6 +36,7 @@ resource "aws_lb" "this" {
     name = "${var.resource_prefix}-${var.service_name}-alb"
     load_balancer_type = "application"
     internal = false
+    enable_deletion_protection = false
 
     subnets = var.subnet_ids
     security_groups = [

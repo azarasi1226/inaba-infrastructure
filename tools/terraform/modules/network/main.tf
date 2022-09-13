@@ -128,6 +128,19 @@ resource "aws_route_table_association" "container-subnet-associations" {
 
 data "aws_region" "current" {}
 
+# 実はエンドポイントにもセキュリティグループが必要なんだZE!俺はこれで４時間溶かしたZE!
+# エンドポイントにも専用にNICが割り当てられてるらしく、インスタンス的な感じポイ？
+# 忘れないようにコメント多めに書いておく。忘れないように。忘れないように
+module "egress_sg" {
+    source = "../../modules/security_group"
+
+    resource_prefix = var.resource_prefix
+    usage_name = "vpc-endpoint"
+    vpc_id = aws_vpc.this.id
+    port = 443
+    cidr_blocks = [aws_vpc.this.cidr_block]
+}
+
 # ECR用VPCエンドポイント(awc ecr get-login-password等のコマンドで使用)
 resource "aws_vpc_endpoint" "ecr" {
     vpc_id = aws_vpc.this.id
@@ -138,6 +151,7 @@ resource "aws_vpc_endpoint" "ecr" {
         aws_subnet.egress_subnets[1].id,
         aws_subnet.egress_subnets[2].id
     ]
+    security_group_ids = [module.egress_sg.security_group_id]
 
     private_dns_enabled = true
 
@@ -156,6 +170,7 @@ resource "aws_vpc_endpoint" "dkr" {
         aws_subnet.egress_subnets[1].id,
         aws_subnet.egress_subnets[2].id
     ]
+    security_group_ids = [module.egress_sg.security_group_id]
 
     private_dns_enabled = true
 
@@ -188,6 +203,7 @@ resource "aws_vpc_endpoint" "logs" {
         aws_subnet.egress_subnets[1].id,
         aws_subnet.egress_subnets[2].id
     ]
+    security_group_ids = [module.egress_sg.security_group_id]
 
     private_dns_enabled = true
 
