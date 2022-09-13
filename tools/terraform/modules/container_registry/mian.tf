@@ -14,26 +14,4 @@ resource "aws_ecr_repository" "this" {
     }
 }
 
-# ライフサイクルポリシー
-resource "aws_ecr_lifecycle_policy" "this" {
-  repository = aws_ecr_repository.this.name
-
-  policy = <<EOF
-{
-    "rules": [
-        {
-            "rulePriority": 1,
-            "description": "30タグしか保持しない",
-            "selection": {
-                "tagStatus": "any",
-                "countType": "imageCountMoreThen",
-                "countNumber": 30
-            },
-            "action": {
-                "type": "expire"
-            }
-        }
-    ]
-}
-EOF
-}
+//TODO ライフサイクルポリシー

@@ -55,5 +55,5 @@ module "frontend_sg" {
   usage_name = "frontend"
   vpc_id = var.vpc_id
   port = "80"
-  cidr_blocks = [var.vpc_cidr]
+  cidr_blocks = ["0.0.0.0/0"]
 }

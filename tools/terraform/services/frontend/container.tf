@@ -39,7 +39,7 @@ resource "aws_ecs_service" "this" {
     //ロードバランサーからのヘルスチェック猶予秒数
     //この時間が短いとTaskの起動に時間がかかった場合、起動と停止の無限ループに陥る
     //長すぎてもスケールを阻害するので1分とする
-    health_check_grace_period_seconds = 60
+    # health_check_grace_period_seconds = 60
 
     network_configuration {
         assign_public_ip = false
@@ -48,8 +48,8 @@ resource "aws_ecs_service" "this" {
     }
 
     # load_balancer {
-    #   target_group_arn = aws_lb_target_group.example.arn
-    #   container_name = "example"
+    #   target_group_arn = module.alb.arn
+    #   container_name = local.service_name
     #   container_port = 80
     # }
 
