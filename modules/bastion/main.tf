@@ -1,6 +1,6 @@
 # SSH Keyの保存先
 locals {
-    private_key_export_path = "../../export/bastion-key.pem"
+    export_path = "../../export"
 }
 
 # SSH接続用セキュリティグループ
@@ -33,8 +33,9 @@ resource "aws_key_pair" "key_pair" {
 
 # ローカルにprivate Key出力
 resource "local_file" "private_key_pem" {
-  filename = local.private_key_export_path
+  filename = "${local.export_path}/bastion-key.pem"
   content = tls_private_key.keygen.private_key_pem
+  file_permission = "400"
 }
 
 # 踏み台サーバー
@@ -49,4 +50,10 @@ resource "aws_instance" "this" {
     tags = {
         "Name" = "${var.resource_prefix}_bastion_ec2"
     }
+}
+
+# SSH接続しやすくするためのお助けコマンドファイル出力
+resource "local_file" "ssh_command" {
+  filename = "${local.export_path}/ssh-hint.txt"
+  content = "ssh -i bastion-key.pem ec2-user@${aws_instance.this.public_dns}"
 }

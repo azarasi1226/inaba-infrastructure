@@ -8,6 +8,15 @@
                 "protocol": "tcp",
                 "containerPort": 80
             }
-        ]
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "${service_name}",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-create-group": "true",
+                "awslogs-stream-prefix": "fargate"
+            }
+        }
     }
 ]
