@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "this"{
 
 # ECSサービス
 resource "aws_ecs_service" "this" {
-    name = "${var.resource_prefix}-service"
+    name = "${var.resource_prefix}-${local.service_name}-service"
     cluster = var.cluster_arn
     task_definition = aws_ecs_task_definition.this.arn
     desired_count = 3
