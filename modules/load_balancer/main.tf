@@ -27,7 +27,7 @@ module "test_sg" {
     resource_prefix = var.resource_prefix
     usage_name = "test"
     vpc_id = var.vpc_id
-    port = 80
+    port = 8080
     cidr_blocks = ["0.0.0.0/0"]
 }
 
@@ -44,6 +44,31 @@ resource "aws_lb" "this" {
         module.https_sg.security_group_id,
         module.test_sg.security_group_id
     ]         
+}
+
+# ターゲットグループ(Blue)
+resource "aws_lb_target_group" "blue" {
+  name = "${var.resource_prefix}-${var.service_name}-blue-tg"
+  target_type = "ip"
+  vpc_id = var.vpc_id
+
+  port = 80
+  protocol = "HTTP"
+
+  health_check {
+    path = "/"
+    healthy_threshold = 5
+    unhealthy_threshold = 2
+    timeout = 5
+    interval = 30
+    matcher = 200
+    port = "traffic-port"
+    protocol = "HTTP"
+  }
+
+  depends_on = [
+    aws_lb.this
+  ]
 }
 
 # ターゲットグループ(Green)
@@ -67,31 +92,6 @@ resource "aws_lb_target_group" "green" {
   }
 
   //依存関係の指定忘れるとたまにdestoryできないことがあるらしいZE!
-  depends_on = [
-    aws_lb.this
-  ]
-}
-
-# ターゲットグループ(Blue)
-resource "aws_lb_target_group" "blue" {
-  name = "${var.resource_prefix}-${var.service_name}-blue-tg"
-  target_type = "ip"
-  vpc_id = var.vpc_id
-
-  port = 80
-  protocol = "HTTP"
-
-  health_check {
-    path = "/"
-    healthy_threshold = 5
-    unhealthy_threshold = 2
-    timeout = 5
-    interval = 30
-    matcher = 200
-    port = "traffic-port"
-    protocol = "HTTP"
-  }
-
   depends_on = [
     aws_lb.this
   ]

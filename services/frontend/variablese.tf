@@ -14,8 +14,13 @@ variable "vpc_cidr" {
 }
 
 variable "cluster_arn" {
-    description = "ECSクラスターARN"
+    description = "ECSサービスを展開するECSクラスターARN"
     type = string
+}
+
+variable "cluster_name" {
+  description = "CICDのDeploymentGroupの指定用クラスター名"
+  type = string
 }
 
 variable "container_private_subnet_ids" {
@@ -26,4 +31,20 @@ variable "container_private_subnet_ids" {
 variable "alb_public_subnet_ids" {
     description = "アプリケーションロードバランサー用のサブネットのidリスト"
     type = list(string)
+}
+
+variable "github_user" {
+  description = "Githubのユーザー名"
+  type = string
+}
+
+variable "github_repository" {
+  description = "Githubのレポジトリ名"
+  type = string
+}
+
+variable "github_branch" {
+  description = "CICD対象のブランチ名"
+  type = string
+  defulat = "main"
 }

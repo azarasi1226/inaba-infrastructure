@@ -1,5 +1,5 @@
+# Inaba Terraform
 # フォルダ構成
-
 ```
 ├─env(環境毎の差分吸収)
 │  ├─dev
@@ -10,15 +10,17 @@
     └─*
 ```
 
+<br>
 
 # 前提条件
 * terraform 1.3.4以上がインストールされていること
 * aws cliがインストールされていること
 * defulatのawsプロファイルが設定されていること  
-(aws configureコマンドでアクセスキーとか設定する奴のことね)
+(aws configureコマンドでアクセスキーとか設定する奴のこと)
+
+<br>
 
 # インフラ構築方法
-
 対象環境のディレクトリに移動
 ```bash
 cd ./env/dev
@@ -36,8 +38,9 @@ terrafrom apply
   Terraform will perform the actions described above.
   Only 'yes' will be accepted to approve.
 
+<br>
 
-## インフラを破壊したい場合
+# インフラを破壊したい場合
  `init, apply`したディレクトリに移動してdestroyコマンドを発行します
 
  ```
@@ -48,3 +51,15 @@ terrafrom apply
 > Do you really want to destroy all resources?
   Terraform will destroy all your managed infrastructure, as shown above.
   There is no undo. Only 'yes' will be accepted to confirm.
+
+<br>
+
+# 備考
+ > なぜInabaと別のRepositoryなの？
+ 
+ リリースライフサイクルが違うから。例えばビジネスロジックコードの変更でCICDかけたいのに、関係ないインフラの変更でCICDかかっちゃったりするから。
+
+ > backend設定でリモートにtfstate管理しないの？
+ 
+ チーム開発しないし、個人的なポートフォリオだからいいかなと...
+ 
