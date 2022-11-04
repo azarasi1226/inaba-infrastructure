@@ -46,5 +46,5 @@ variable "github_repository" {
 variable "github_branch" {
   description = "CICD対象のブランチ名"
   type = string
-  defulat = "main"
+  default = "main"
 }

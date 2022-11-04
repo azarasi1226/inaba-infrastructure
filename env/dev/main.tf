@@ -1,5 +1,5 @@
 locals {
-    resource_prefix = "momiji-dev"
+    resource_prefix = "inaba-dev"
 }
 
 # ネットワーク
@@ -35,7 +35,7 @@ module "frontend" {
     container_private_subnet_ids = module.network.container_private_subnet_ids
     alb_public_subnet_ids = module.network.ingress_public_subnet_ids
     github_user = "seal1226"
-    github_repository = "Inaba"
+    github_repository = "Inaba-Infra"
 }
 
 # バックエンド　
