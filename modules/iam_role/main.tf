@@ -1,6 +1,6 @@
 locals {
-    //リソース名
-    resource_name = "${var.resource_prefix}-${var.usage_name}"
+  //リソース名
+  resource_name = "${var.resource_prefix}-${var.usage_name}"
 }
 
 # 信頼ポリシー

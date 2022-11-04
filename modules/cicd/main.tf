@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # CodePipelineのArtifact用S3
 resource "aws_s3_bucket" "artifact" {
-  bucket = "${var.resource_prefix}-artifact"
+  bucket        = "${var.resource_prefix}-artifact"
   force_destroy = true
 }
 
@@ -23,7 +23,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "name" {
 # CodeBuild用ポリシー
 data "aws_iam_policy_document" "codebuild" {
   statement {
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["*"]
     actions = [
       # s3
@@ -38,17 +38,17 @@ data "aws_iam_policy_document" "codebuild" {
 
 # CodeBuild用ロール
 module "codebuild_role" {
-    source = "../iam_role"
+  source = "../iam_role"
 
-    resource_prefix = var.resource_prefix
-    usage_name = "codebuild"
-    identifier = "codebuild.amazonaws.com"
-    policy = data.aws_iam_policy_document.codebuild.json
+  resource_prefix = var.resource_prefix
+  usage_name      = "codebuild"
+  identifier      = "codebuild.amazonaws.com"
+  policy          = data.aws_iam_policy_document.codebuild.json
 }
 
 # CodeBuild
 resource "aws_codebuild_project" "this" {
-  name = "${var.resource_prefix}-cicd-build"
+  name         = "${var.resource_prefix}-cicd-build"
   service_role = module.codebuild_role.iam_role_arn
 
   source {
@@ -61,9 +61,9 @@ resource "aws_codebuild_project" "this" {
 
   environment {
     # TODO : machineイメージ調べる
-    type = "LINUX_CONTAINER"
+    type         = "LINUX_CONTAINER"
     compute_type = "BUILD_GENERAL1_MEDIUM"
-    image = "aws/codebuild/standard:2.0"
+    image        = "aws/codebuild/standard:2.0"
 
     # Dockerコマンドを許可
     privileged_mode = true
@@ -73,46 +73,46 @@ resource "aws_codebuild_project" "this" {
 # ------------------------------------------------------------------------------
 # CodeDeploy用ポリシー
 data "aws_iam_policy_document" "deploy" {
-    statement {
-        effect = "Allow"
-        resources = ["*"]
-        actions = [
-          "ecs:DescribeServices"
-        ]
-    }
+  statement {
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "ecs:DescribeServices"
+    ]
+  }
 }
 
 # CodePipeline用ロール
 module "deploy_role" {
-    source = "../iam_role"
+  source = "../iam_role"
 
-    resource_prefix = var.resource_prefix
-    usage_name = "deploy"
-    identifier = "codedeploy.amazonaws.com"
-    policy = data.aws_iam_policy_document.deploy.json
+  resource_prefix = var.resource_prefix
+  usage_name      = "deploy"
+  identifier      = "codedeploy.amazonaws.com"
+  policy          = data.aws_iam_policy_document.deploy.json
 }
 
 # CodeDeployのアプリケーション
 resource "aws_codedeploy_app" "this" {
-  name = "${var.resource_prefix}-deploy-app"
+  name             = "${var.resource_prefix}-deploy-app"
   compute_platform = "ECS"
 }
 
 # Deployグループ
 resource "aws_codedeploy_deployment_group" "this" {
-  deployment_group_name = "${var.resource_prefix}-deploy-group"
-  app_name = aws_codedeploy_app.this.name
+  deployment_group_name  = "${var.resource_prefix}-deploy-group"
+  app_name               = aws_codedeploy_app.this.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
-  service_role_arn = module.deploy_role.iam_role_arn
+  service_role_arn       = module.deploy_role.iam_role_arn
 
   auto_rollback_configuration {
     enabled = true
     events  = ["DEPLOYMENT_FAILURE"]
   }
-  
+
   deployment_style {
     deployment_option = "WITH_TRAFFIC_CONTROL"
-    deployment_type = "BLUE_GREEN"
+    deployment_type   = "BLUE_GREEN"
   }
 
   blue_green_deployment_config {
@@ -121,7 +121,7 @@ resource "aws_codedeploy_deployment_group" "this" {
     }
 
     terminate_blue_instances_on_deployment_success {
-      action = "TERMINATE"
+      action                           = "TERMINATE"
       termination_wait_time_in_minutes = 5
     }
   }
@@ -144,7 +144,7 @@ resource "aws_codedeploy_deployment_group" "this" {
       target_group {
         name = var.blue_targetgroup
       }
-      
+
       target_group {
         name = var.green_targetgroup
       }
@@ -155,40 +155,40 @@ resource "aws_codedeploy_deployment_group" "this" {
 # ------------------------------------------------------------------------------
 # Githubとのコネクション
 resource "aws_codestarconnections_connection" "this" {
-  name = "${var.resource_prefix}-github"
+  name          = "${var.resource_prefix}-github"
   provider_type = "GitHub"
 }
 
 # CodePipeline用ポリシー
 data "aws_iam_policy_document" "pipeline" {
-    statement {
-        effect = "Allow"
-        resources = ["*"]
-        actions = [
-            "s3:*",
-            "codebuild:*",
-            "codestar-connections:UseConnection",
-        ]
-    }
+  statement {
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "s3:*",
+      "codebuild:*",
+      "codestar-connections:UseConnection",
+    ]
+  }
 }
 
 # CodePipeline用ロール
 module "codepipline_role" {
-    source = "../iam_role"
+  source = "../iam_role"
 
-    resource_prefix = var.resource_prefix
-    usage_name = "pipeline"
-    identifier = "codepipeline.amazonaws.com"
-    policy = data.aws_iam_policy_document.pipeline.json
+  resource_prefix = var.resource_prefix
+  usage_name      = "pipeline"
+  identifier      = "codepipeline.amazonaws.com"
+  policy          = data.aws_iam_policy_document.pipeline.json
 }
 
 # CodePipeline
 resource "aws_codepipeline" "this" {
-  name = "${var.resource_prefix}-cicd-pipline"
+  name     = "${var.resource_prefix}-cicd-pipline"
   role_arn = module.codepipline_role.iam_role_arn
 
   artifact_store {
-    type = "S3"
+    type     = "S3"
     location = aws_s3_bucket.artifact.bucket
   }
 
@@ -196,36 +196,36 @@ resource "aws_codepipeline" "this" {
     name = "Source"
 
     action {
-      name = "Source"
-      category = "Source"
-      owner = "AWS"
-      provider = "CodeStarSourceConnection"
-      version = "1"
+      name             = "Source"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
+      version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn = aws_codestarconnections_connection.this.arn
+        ConnectionArn    = aws_codestarconnections_connection.this.arn
         FullRepositoryId = "${var.github_user}/${var.github_repository}"
-        BranchName = var.github_branch
+        BranchName       = var.github_branch
       }
     }
   }
 
   stage {
     name = "Build"
-    
+
     action {
-      name = "Build"
-      category = "Build"
-      owner = "AWS"
-      provider = "CodeBuild"
-      version = "1"
-      input_artifacts = ["source_output"]
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["source_output"]
       output_artifacts = ["build_output"]
 
       configuration = {
         ProjectName = aws_codebuild_project.this.id
-      }  
+      }
     }
   }
 
@@ -233,24 +233,24 @@ resource "aws_codepipeline" "this" {
     name = "Deploy"
 
     action {
-      name = "Deploy"
-      category = "Deploy"
-      owner = "AWS"
-      provider = "CodeDeployToECS"
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "CodeDeployToECS"
       input_artifacts = ["source_output", "build_output"]
       version         = "1"
 
       configuration = {
-        ApplicationName                = aws_codedeploy_app.this.name
-        DeploymentGroupName            = aws_codedeploy_deployment_group.this.deployment_group_name
+        ApplicationName     = aws_codedeploy_app.this.name
+        DeploymentGroupName = aws_codedeploy_deployment_group.this.deployment_group_name
         # taskdef.json
         TaskDefinitionTemplateArtifact = "source_output"
         # appspec.yaml
-        AppSpecTemplateArtifact        = "source_output"
+        AppSpecTemplateArtifact = "source_output"
         # ImageDetail.json？
-        Image1ArtifactName             = "build_output"
+        Image1ArtifactName = "build_output"
         # taskdef.jsonで置き換えるImage名
-        Image1ContainerName            = "IMAGE1_NAME"
+        Image1ContainerName = "IMAGE1_NAME"
       }
     }
   }
