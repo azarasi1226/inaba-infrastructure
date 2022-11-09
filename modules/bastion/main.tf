@@ -45,7 +45,7 @@ resource "aws_instance" "this" {
   subnet_id       = var.subnet_id
   user_data       = file("${path.module}/user-data.sh")
   key_name        = aws_key_pair.key_pair.key_name
-  security_groups = [module.ssh_sg.security_group_id]
+  vpc_security_group_ids  = [module.ssh_sg.security_group_id]
 
   tags = {
     "Name" = "${var.resource_prefix}_bastion_ec2"
