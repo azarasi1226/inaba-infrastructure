@@ -1,7 +1,11 @@
+locals {
+  resource_name = "${var.resource_prefix}-${var.service_name}"
+}
+
 # ------------------------------------------------------------------------------
 # CodePipelineのArtifact用S3
 resource "aws_s3_bucket" "artifact" {
-  bucket        = "${var.resource_prefix}-artifact"
+  bucket        = "${local.resource_name}-artifact"
   force_destroy = true
 }
 
@@ -41,14 +45,14 @@ module "codebuild_role" {
   source = "../iam_role"
 
   resource_prefix = var.resource_prefix
-  usage_name      = "codebuild"
+  usage_name      = "${var.service_name}-build"
   identifier      = "codebuild.amazonaws.com"
   policy          = data.aws_iam_policy_document.codebuild.json
 }
 
 # CodeBuild
 resource "aws_codebuild_project" "this" {
-  name         = "${var.resource_prefix}-cicd-build"
+  name         = "${local.resource_name}-build"
   service_role = module.codebuild_role.iam_role_arn
 
   source {
@@ -87,20 +91,20 @@ module "deploy_role" {
   source = "../iam_role"
 
   resource_prefix = var.resource_prefix
-  usage_name      = "deploy"
+  usage_name      = "${var.service_name}-deploy"
   identifier      = "codedeploy.amazonaws.com"
   policy          = data.aws_iam_policy_document.deploy.json
 }
 
 # CodeDeployのアプリケーション
 resource "aws_codedeploy_app" "this" {
-  name             = "${var.resource_prefix}-deploy-app"
+  name             = "${local.resource_name}-deploy-app"
   compute_platform = "ECS"
 }
 
 # Deployグループ
 resource "aws_codedeploy_deployment_group" "this" {
-  deployment_group_name  = "${var.resource_prefix}-deploy-group"
+  deployment_group_name  = "${local.resource_name}-deploy-group"
   app_name               = aws_codedeploy_app.this.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
   service_role_arn       = module.deploy_role.iam_role_arn
@@ -142,11 +146,11 @@ resource "aws_codedeploy_deployment_group" "this" {
       }
 
       target_group {
-        name = var.blue_targetgroup
+        name = var.blue_targetgroup_name
       }
 
       target_group {
-        name = var.green_targetgroup
+        name = var.green_targetgroup_name
       }
     }
   }
@@ -155,7 +159,7 @@ resource "aws_codedeploy_deployment_group" "this" {
 # ------------------------------------------------------------------------------
 # Githubとのコネクション
 resource "aws_codestarconnections_connection" "this" {
-  name          = "${var.resource_prefix}-github"
+  name          = "${local.resource_name}-github"
   provider_type = "GitHub"
 }
 
@@ -177,14 +181,14 @@ module "codepipline_role" {
   source = "../iam_role"
 
   resource_prefix = var.resource_prefix
-  usage_name      = "pipeline"
+  usage_name      = " ${var.service_name}-pipeline"
   identifier      = "codepipeline.amazonaws.com"
   policy          = data.aws_iam_policy_document.pipeline.json
 }
 
 # CodePipeline
 resource "aws_codepipeline" "this" {
-  name     = "${var.resource_prefix}-cicd-pipline"
+  name     = "${var.resource_name}-pipline"
   role_arn = module.codepipline_role.iam_role_arn
 
   artifact_store {

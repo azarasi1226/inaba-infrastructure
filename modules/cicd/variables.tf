@@ -3,6 +3,11 @@ variable "resource_prefix" {
   type        = string
 }
 
+variable "service_name" {
+  description = "サービス名"
+  type        = string
+}
+
 variable "github_user" {
   description = "GihutbのUserName"
   type        = string
@@ -38,12 +43,12 @@ variable "test_listener_arn" {
   type        = string
 }
 
-variable "blue_targetgroup" {
+variable "blue_targetgroup_name" {
   description = "blueTargetGroup"
   type        = string
 }
 
-variable "green_targetgroup" {
+variable "green_targetgroup_name" {
   description = "greenTargetGroup"
   type        = string
 }

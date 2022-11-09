@@ -104,7 +104,7 @@ resource "aws_route_table" "container_private_route_table" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "${var.resource_prefix}-container-public-route-table"
+    Name = "${var.resource_prefix}-container-private-route-table"
   }
 }
 

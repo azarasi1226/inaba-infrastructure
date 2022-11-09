@@ -139,6 +139,7 @@ module "frontend_cicd" {
   source = "../../modules/cicd"
 
   resource_prefix   = var.resource_prefix
+  service_name      = local.service_name
   github_user       = var.github_user
   github_repository = var.github_repository
   github_branch     = var.github_branch
@@ -146,6 +147,6 @@ module "frontend_cicd" {
   ecs_service_name  = aws_ecs_service.this.name
   prod_listener_arn = module.alb.prod_listener_arn
   test_listener_arn = module.alb.test_listener_arn
-  blue_targetgroup  = module.alb.blue_targetgroup_name
-  green_targetgroup = module.alb.green_targetgroup_name
+  blue_targetgroup_name  = module.alb.blue_targetgroup_name
+  green_targetgroup_name = module.alb.green_targetgroup_name
 }
