@@ -1,6 +1,5 @@
 locals {
-  //リソース名
-  resource_name = "${var.resource_prefix}-${var.usage_name}-ecr"
+  resource_name = "${var.resource_prefix}-${var.usage_name}"
 }
 
 # セキュリティグループ
@@ -14,7 +13,7 @@ resource "aws_security_group" "this" {
 }
 
 # インバウンドルール
-resource "aws_security_group_rule" "ingress_example" {
+resource "aws_security_group_rule" "ingress" {
   type              = "ingress"
   from_port         = var.port
   to_port           = var.port
@@ -24,7 +23,7 @@ resource "aws_security_group_rule" "ingress_example" {
 }
 
 # アウトバウンドルール(全通信を許可)
-resource "aws_security_group_rule" "egress_example" {
+resource "aws_security_group_rule" "egress" {
   type              = "egress"
   from_port         = "0"
   to_port           = "0"
