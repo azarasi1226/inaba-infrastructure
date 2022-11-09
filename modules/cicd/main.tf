@@ -181,14 +181,14 @@ module "codepipline_role" {
   source = "../iam_role"
 
   resource_prefix = var.resource_prefix
-  usage_name      = " ${var.service_name}-pipeline"
+  usage_name      = "${var.service_name}-pipeline"
   identifier      = "codepipeline.amazonaws.com"
   policy          = data.aws_iam_policy_document.pipeline.json
 }
 
 # CodePipeline
 resource "aws_codepipeline" "this" {
-  name     = "${var.resource_name}-pipline"
+  name     = "${local.resource_name}-pipline"
   role_arn = module.codepipline_role.iam_role_arn
 
   artifact_store {
