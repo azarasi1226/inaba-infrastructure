@@ -1,4 +1,5 @@
-# Inaba Terraform
+
+# inaba-infra
 # 構成
 ```
 ├─env(環境毎の差分吸収)
@@ -54,7 +55,7 @@ rule "terraform_required_providers" {
 cd ./env/dev
 ```
 
-terraformでの環境構築
+terraformコマンド実行
 
 ```bash
 terraform init
@@ -68,7 +69,7 @@ terrafrom apply
 
 <br>
 
-# インフラを破壊したい場合
+# インフラ破壊
  `init, apply`したディレクトリに移動してdestroyコマンドを発行します
 
  ```bash
