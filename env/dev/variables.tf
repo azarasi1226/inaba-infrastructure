@@ -1,4 +1,4 @@
 locals {
-  project_name     = "momiji"
+  project_name     = "inaba"
   environment_name = "dev"
 }
