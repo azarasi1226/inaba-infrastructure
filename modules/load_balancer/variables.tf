@@ -17,3 +17,5 @@ variable "vpc_id" {
   description = "VPC_ID"
   type        = string
 }
+
+//TODO: ポート番号とかヘルスチェック用のパスとかも外部から渡せるようにしないとあかんやろ

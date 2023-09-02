@@ -91,7 +91,6 @@ resource "aws_lb_target_group" "green" {
     protocol            = "HTTP"
   }
 
-  //依存関係の指定忘れるとたまにdestoryできないことがあるらしいZE!
   depends_on = [
     aws_lb.this
   ]

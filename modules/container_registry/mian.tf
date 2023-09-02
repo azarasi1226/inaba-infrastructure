@@ -1,5 +1,4 @@
 locals {
-  //リソース名
   resource_name = "${var.resource_prefix}-${var.service_name}-cr"
 }
 
