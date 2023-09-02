@@ -17,9 +17,36 @@
 * aws cli
 * pre-commit
 * tflint
-* tfdoc
+* terraform-docs
 
 <br>
+
+# 準備
+pre-commitの適応
+```
+pre-commit install
+```
+
+tflint用の設定ファイルをホームディレクトリに作成  
+path: ~/.tflint.hcl
+```
+plugin "aws" {
+  enabled = true
+  version = "0.26.0"
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+}
+
+rule "terraform_required_version" {
+  enabled = false
+}
+
+rule "terraform_required_providers" {
+  enabled = false
+}
+```
+
+<br>
+
 
 # インフラ構築方法
 対象環境のディレクトリに移動
@@ -29,7 +56,7 @@ cd ./env/dev
 
 terraformでの環境構築
 
-```
+```bash
 terraform init
 terrafrom apply
 ```
@@ -44,7 +71,7 @@ terrafrom apply
 # インフラを破壊したい場合
  `init, apply`したディレクトリに移動してdestroyコマンドを発行します
 
- ```
+ ```bash
  terraform destroy
  ```
 
@@ -52,15 +79,3 @@ terrafrom apply
 > Do you really want to destroy all resources?
   Terraform will destroy all your managed infrastructure, as shown above.
   There is no undo. Only 'yes' will be accepted to confirm.
-
-<br>
-
-# 備考
- > なぜInabaと別のRepositoryなの？
- 
- リリースライフサイクルが違うから。例えばビジネスロジックコードの変更でCICDかけたいのに、関係ないインフラの変更でCICDかかっちゃったりするから。
-
- > backend設定でリモートにtfstate管理しないの？
- 
- チーム開発しないし、個人的なポートフォリオだからいいかなと...
- 
