@@ -1,5 +1,5 @@
 # Inaba Terraform
-# フォルダ構成
+# 構成
 ```
 ├─env(環境毎の差分吸収)
 │  ├─dev
@@ -13,10 +13,11 @@
 <br>
 
 # 前提条件
-* terraform 1.3.4以上がインストールされていること
-* aws cliがインストールされていること
-* defulatのawsプロファイルが設定されていること  
-(aws configureコマンドでアクセスキーとか設定する奴のこと)
+* terraform
+* aws cli
+* pre-commit
+* tflint
+* tfdoc
 
 <br>
 
