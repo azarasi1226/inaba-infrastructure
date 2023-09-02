@@ -46,10 +46,15 @@ rule "terraform_required_providers" {
 }
 ```
 
+tflintにプラグインを適応
+```
+tflint --init
+```
+
 <br>
 
 
-# インフラ構築方法
+# インフラ構築
 対象環境のディレクトリに移動
 ```bash
 cd ./env/dev
