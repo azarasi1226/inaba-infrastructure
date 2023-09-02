@@ -40,12 +40,12 @@ resource "local_file" "private_key_pem" {
 
 # 踏み台サーバー
 resource "aws_instance" "this" {
-  ami             = data.aws_ssm_parameter.amzn2_ami.value
-  instance_type   = "t2.micro"
-  subnet_id       = var.subnet_id
-  user_data       = file("${path.module}/user-data.sh")
-  key_name        = aws_key_pair.key_pair.key_name
-  vpc_security_group_ids  = [module.ssh_sg.security_group_id]
+  ami                    = data.aws_ssm_parameter.amzn2_ami.value
+  instance_type          = "t2.micro"
+  subnet_id              = var.subnet_id
+  user_data              = file("${path.module}/user-data.sh")
+  key_name               = aws_key_pair.key_pair.key_name
+  vpc_security_group_ids = [module.ssh_sg.security_group_id]
 
   tags = {
     "Name" = "${var.resource_prefix}_bastion_ec2"

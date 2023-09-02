@@ -8,11 +8,6 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "vpc_cidr" {
-  description = "VPCのCIDR"
-  type        = string
-}
-
 variable "cluster_arn" {
   description = "ECSサービスを展開するECSクラスターARN"
   type        = string

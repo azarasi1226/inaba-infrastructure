@@ -13,5 +13,3 @@ resource "aws_ecr_repository" "this" {
     scan_on_push = true
   }
 }
-
-//TODO ライフサイクルポリシー
