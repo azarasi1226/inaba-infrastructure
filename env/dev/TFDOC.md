@@ -31,7 +31,10 @@
 
 ## Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | AWS\_PROFILE | `string` | n/a | yes |
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS\_REGION | `string` | n/a | yes |
 
 ## Outputs
 
