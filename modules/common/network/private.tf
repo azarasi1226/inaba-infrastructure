@@ -1,9 +1,9 @@
 resource "aws_subnet" "private" {
-  count = local.az_count
+  count = length(var.private_subnets)
 
   vpc_id            = aws_vpc.this.id
-  cidr_block        = var.private_subnet_cidrs[count.index]
-  availability_zone = data.aws_availability_zones.this.names[count.index]
+  cidr_block        = var.private_subnets[count.index].cidr
+  availability_zone = var.private_subnets[count.index].az
 
   tags = {
     Name = "${var.resource_prefix}-private-subnet-${count.index}"
@@ -20,8 +20,8 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  count = local.az_count
+  count = length(aws_subnet.private)
 
-  subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
+  subnet_id      = aws_subnet.private[count.index].id
 }

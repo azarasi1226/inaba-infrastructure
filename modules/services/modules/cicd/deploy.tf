@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "deploy" {
   statement {
-    effect    = "Allow"
+    effect = "Allow"
     actions = [
       "elasticloadbalancing:DescribeRules",
       "elasticloadbalancing:DescribeListeners",
@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "deploy" {
   }
 
   statement {
-    effect = "Allow"
+    effect  = "Allow"
     actions = ["iam:PassRole"]
     # TODO(IAM　権限絞る)
     resources = ["*"]

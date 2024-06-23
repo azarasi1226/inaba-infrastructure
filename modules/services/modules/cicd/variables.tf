@@ -1,43 +1,43 @@
 variable "resource_prefix" {
-  type        = string
+  type = string
 }
 
 variable "service_name" {
-  type        = string
+  type = string
 }
 
 variable "github_user" {
-  type        = string
+  type = string
 }
 
 variable "github_repository" {
-  type        = string
+  type = string
 }
 
 variable "github_branch" {
-  type        = string
+  type = string
 }
 
 variable "ecs_cluster_name" {
-  type        = string
+  type = string
 }
 
 variable "ecs_service_name" {
-  type        = string
+  type = string
 }
 
 variable "prod_listener_arn" {
-  type        = string
+  type = string
 }
 
 variable "test_listener_arn" {
-  type        = string
+  type = string
 }
 
 variable "target_group1_name" {
-  type        = string
+  type = string
 }
 
 variable "target_group2_name" {
-  type        = string
+  type = string
 }

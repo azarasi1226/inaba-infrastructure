@@ -5,11 +5,11 @@ resource "aws_ecs_cluster" "this" {
 module "network" {
   source = "./common/network"
 
-  resource_prefix = var.resource_prefix
-  vpc_cidr = var.network.vpc_cidr
-  management_subnet_cidr = var.network.management_subnet_cidr
-  ingress_subnet_cidrs = var.network.ingress_subnet_cidrs
-  private_subnet_cidrs = var.network.private_subnet_cidrs
+  resource_prefix   = var.resource_prefix
+  vpc_cidr          = var.network.vpc_cidr
+  management_subnet = var.network.management_subnet
+  ingress_subnets   = var.network.ingress_subnets
+  private_subnets   = var.network.private_subnets
 }
 
 # module "bastion" {

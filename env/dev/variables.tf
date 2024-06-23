@@ -1,9 +1,5 @@
-variable "aws_region" {
-  type        = string
-}
-
 variable "aws_profile" {
-  type        = string
+  type = string
 }
 
 variable "resource_prefix" {

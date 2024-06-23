@@ -1,9 +1,9 @@
 resource "aws_subnet" "ingress" {
-  count = local.az_count
+  count = length(var.ingress_subnets)
 
   vpc_id                  = aws_vpc.this.id
-  cidr_block              = var.ingress_subnet_cidrs[count.index]
-  availability_zone       = data.aws_availability_zones.this.names[count.index]
+  cidr_block              = var.ingress_subnets[count.index].cidr
+  availability_zone       = var.ingress_subnets[count.index].az
   map_public_ip_on_launch = true
 
   tags = {
@@ -21,7 +21,7 @@ resource "aws_route_table" "ingress" {
 }
 
 resource "aws_route_table_association" "ingress" {
-  count = local.az_count
+  count = length(aws_subnet.ingress)
 
   route_table_id = aws_route_table.ingress.id
   subnet_id      = aws_subnet.ingress[count.index].id

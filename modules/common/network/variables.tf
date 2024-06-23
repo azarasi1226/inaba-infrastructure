@@ -1,19 +1,28 @@
 variable "resource_prefix" {
-  type        = string
+  type = string
 }
 
 variable "vpc_cidr" {
   type = string
 }
 
-variable "management_subnet_cidr" {
-  type = string
+variable "management_subnet" {
+  type = object({
+    cidr = string
+    az   = string
+  })
 }
 
-variable "ingress_subnet_cidrs" {
-  type        = list(string)
+variable "ingress_subnets" {
+  type = list(object({
+    cidr = string
+    az   = string
+  }))
 }
 
-variable "private_subnet_cidrs" {
-  type        = list(string)
+variable "private_subnets" {
+  type = list(object({
+    cidr = string
+    az   = string
+  }))
 }
