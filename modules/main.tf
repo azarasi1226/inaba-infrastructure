@@ -1,20 +1,17 @@
-# ネットワーク
-module "network" {
-  source = "../../modules/network"
+resource "aws_ecs_cluster" "this" {
+  name = "${var.resource_prefix}-cluster"
+}
 
-  resource_prefix = local.resource_prefix
+module "network" {
+  source = "./common/network"
+
+  resource_prefix = var.resource_prefix
   vpc_cidr = var.network.vpc_cidr
   management_subnet_cidr = var.network.management_subnet_cidr
   ingress_subnet_cidrs = var.network.ingress_subnet_cidrs
   private_subnet_cidrs = var.network.private_subnet_cidrs
 }
 
-# # 各サービスを管理するECSクラスター
-# resource "aws_ecs_cluster" "this" {
-#   name = "${local.resource_prefix}-cluster"
-# }
-
-# # 踏み台サーバー
 # module "bastion" {
 #   source = "../../modules/bastion"
 
