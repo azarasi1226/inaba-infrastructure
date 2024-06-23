@@ -1,77 +1,59 @@
-
-# inaba-infra
-# 構成
-```
-├─env(環境毎の差分吸収)
-│  ├─dev
-│  └─prod
-├─modules(各サービス毎に使う汎用モジュール)
-│  └─*
-└─services(サービス毎の差分吸収)
-    └─*
-```
-
-<br>
-
 # 前提条件
 * terraform
 * aws cli
 * pre-commit
 * tflint
-* terraform-docs
 
+<br>
 <br>
 
 # 準備
+## 1. 初期インストール
 pre-commitの適応
 ```
 pre-commit install
 ```
 
-tflint用の設定ファイルをホームディレクトリに作成  
-path: ~/.tflint.hcl
-```
-plugin "aws" {
-  enabled = true
-  version = "0.26.0"
-  source  = "github.com/terraform-linters/tflint-ruleset-aws"
-}
+<br>
 
-rule "terraform_required_version" {
-  enabled = false
-}
+## 2. Terraform管理外リソース
+* Route53のパブリックホストゾーン
 
-rule "terraform_required_providers" {
-  enabled = false
-}
-```
+<br>
+<br>
 
-tflintにプラグインを適応
-```
-tflint --init
+# インフラ構築
+対象環境に移動
+```bash
+cd ./environments/{対象環境}
 ```
 
 <br>
 
-
-# インフラ構築
-対象環境のディレクトリに移動
-```bash
-cd ./env/dev
-```
-
 terraformコマンド実行
-
 ```bash
-terraform init
+terraform init \
+  -backend-config="profile={tfstateファイルを管理している環境のprofile}"
+
 terrafrom apply
 ```
 
-しばらく待つと、"本当にインフラ作っちゃっていいの？" って聞かれるので`yes`と入力してEnter!
+<br>
+
+必須情報を入力
+```
+var.aws_profile
+  AWS Profile
+```
+
+<br>
+
+しばらく待つと、"本当にインフラ作っちゃっていいの？" って聞かれるので`yes`と入力してEnter
 > Do you want to perform these actions?
   Terraform will perform the actions described above.
   Only 'yes' will be accepted to approve.
 
+<br>
 <br>
 
 # インフラ破壊
@@ -81,7 +63,7 @@ terrafrom apply
  terraform destroy
  ```
 
-しばらく待つと、"全部消すけどええんか？"って聞かれるので`yes`を入力してEnter!
+しばらく待つと、"全部消すけどいいの？"って聞かれるので`yes`と入力してEnter
 > Do you really want to destroy all resources?
   Terraform will destroy all your managed infrastructure, as shown above.
   There is no undo. Only 'yes' will be accepted to confirm.

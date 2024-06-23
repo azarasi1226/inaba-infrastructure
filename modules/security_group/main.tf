@@ -2,7 +2,6 @@ locals {
   resource_name = "${var.resource_prefix}-${var.usage_name}"
 }
 
-# セキュリティグループ
 resource "aws_security_group" "this" {
   name   = "${local.resource_name}-sg"
   vpc_id = var.vpc_id
