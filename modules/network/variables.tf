@@ -1,4 +1,19 @@
 variable "resource_prefix" {
-  description = "リソース名につける識別用プレフィックス"
   type        = string
+}
+
+variable "vpc_cidr" {
+  type = string
+}
+
+variable "management_subnet_cidr" {
+  type = string
+}
+
+variable "ingress_subnet_cidrs" {
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  type        = list(string)
 }
