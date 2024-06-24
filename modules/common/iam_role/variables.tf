@@ -1,9 +1,9 @@
 variable "resource_prefix" {
-  type        = string
+  type = string
 }
 
 variable "usage_name" {
-  type        = string
+  type = string
 }
 
 variable "identifier" {
@@ -12,5 +12,5 @@ variable "identifier" {
 }
 
 variable "policy_json" {
-  type        = string
+  type = string
 }

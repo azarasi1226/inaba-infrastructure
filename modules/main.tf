@@ -13,7 +13,7 @@ module "network" {
 }
 
 module "jump_server" {
-  count = var.jump_server.enabled ? 1 : 0
+  count  = var.jump_server.enabled ? 1 : 0
   source = "./common/jump_server"
 
   resource_prefix = var.resource_prefix

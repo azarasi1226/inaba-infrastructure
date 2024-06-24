@@ -4,12 +4,12 @@ module "jump_server" {
   resource_prefix = var.resource_prefix
   usage_name      = "jump-server"
   vpc_id          = var.vpc_id
-  ingress_rules   = [
+  ingress_rules = [
     {
-      allow_port = 22
+      allow_port  = 22
       allow_cidrs = ["0.0.0.0/0"]
     }
-  ] 
+  ]
 }
 
 # TODO: ここをlatestにすると、Linuxのバージョンアップのせいでuser-dataが使えなくなる可能性があるのでバージョンは固定したほうがよさそう
