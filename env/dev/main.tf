@@ -7,4 +7,5 @@ module "entory" {
 
   resource_prefix = local.resource_prefix
   network         = local.network
+  jump_server     = local.jump_server
 }

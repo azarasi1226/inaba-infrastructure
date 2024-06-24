@@ -1,5 +1,6 @@
 locals {
   aws_region = "ap-northeast-1"
+
   network = {
     resource_prefix   = var.resource_prefix,
     vpc_cidr          = "192.168.0.0/16",
@@ -14,5 +15,9 @@ locals {
       { cidr = "192.168.5.0/24", az = "ap-northeast-1c" },
       { cidr = "192.168.6.0/24", az = "ap-northeast-1d" }
     ]
+  }
+
+  jump_server = {
+    enabled = true
   }
 }

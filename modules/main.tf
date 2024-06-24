@@ -12,13 +12,14 @@ module "network" {
   private_subnets   = var.network.private_subnets
 }
 
-# module "bastion" {
-#   source = "../../modules/bastion"
+module "jump_server" {
+  count = var.jump_server.enabled ? 1 : 0
+  source = "./common/jump_server"
 
-#   resource_prefix = local.resource_prefix
-#   vpc_id          = module.network.vpc_id
-#   subnet_id       = module.network.management_subnets_id
-# }
+  resource_prefix = var.resource_prefix
+  vpc_id          = module.network.vpc_id
+  subnet_id       = module.network.management_subnet_id
+}
 
 # # フロントエンド
 # module "frontend" {

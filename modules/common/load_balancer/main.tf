@@ -32,7 +32,7 @@ module "test_sg" {
 }
 
 # ロードバランサー
-resource "aws_lb" "this" {
+resource "aws_lb" "this" {ro
   name                       = "${var.resource_prefix}-${var.service_name}-alb"
   load_balancer_type         = "application"
   internal                   = false

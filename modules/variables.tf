@@ -19,3 +19,9 @@ variable "network" {
     }))
   })
 }
+
+variable "jump_server" {
+  type = object({
+    enabled = bool
+  })
+}
