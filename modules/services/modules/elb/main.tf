@@ -32,7 +32,7 @@ module "test_sg" {
 }
 
 # ロードバランサー
-resource "aws_lb" "this" {ro
+resource "aws_lb" "this" {
   name                       = "${var.resource_prefix}-${var.service_name}-alb"
   load_balancer_type         = "application"
   internal                   = false
@@ -72,6 +72,7 @@ resource "aws_lb_target_group" "blue" {
 }
 
 # ターゲットグループ(Green)
+
 resource "aws_lb_target_group" "green" {
   name        = "${var.resource_prefix}-${var.service_name}-green-tg"
   target_type = "ip"

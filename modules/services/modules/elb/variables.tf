@@ -13,7 +13,7 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-variable "vpc_id" {@
+variable "vpc_id" {
   description = "VPC_ID"
   type        = string
 }
