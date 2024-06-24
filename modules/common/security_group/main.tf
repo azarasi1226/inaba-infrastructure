@@ -12,11 +12,13 @@ resource "aws_security_group" "this" {
 }
 
 resource "aws_security_group_rule" "ingress" {
+  count = length(var.ingress_rules)
+
   type              = "ingress"
-  from_port         = var.allow_port
-  to_port           = var.allow_port
+  from_port         = var.ingress_rules[count.index].allow_port
+  to_port           = var.ingress_rules[count.index].allow_port
   protocol          = "tcp"
-  cidr_blocks       = var.allow_cidrs
+  cidr_blocks       = var.ingress_rules[count.index].allow_cidrs
   security_group_id = aws_security_group.this.id
 }
 

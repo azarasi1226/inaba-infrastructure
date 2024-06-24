@@ -10,10 +10,9 @@ variable "vpc_id" {
   type = string
 }
 
-variable "allow_port" {
-  type = number
-}
-
-variable "allow_cidrs" {
-  type = list(string)
+variable "ingress_rules" {
+  type = list(object({
+    allow_port = number
+    allow_cidrs = list(string)
+  }))
 }
