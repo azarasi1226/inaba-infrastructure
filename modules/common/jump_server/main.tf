@@ -2,7 +2,7 @@ module "jump_server" {
   source = "../security_group"
 
   resource_prefix = var.resource_prefix
-  usage_name      = "jump_server"
+  usage_name      = "jump-server"
   vpc_id          = var.vpc_id
   ingress_rules   = [
     {
