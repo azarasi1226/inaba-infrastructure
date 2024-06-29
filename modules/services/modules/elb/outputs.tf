@@ -10,18 +10,18 @@ output "test_listener_arn" {
   value = aws_lb_listener.test.arn
 }
 
-output "blue_targetgroup_arn" {
-  value = aws_lb_target_group.blue.arn
+output "target_group_1_arn" {
+  value = aws_lb_target_group.1.arn
 }
 
-output "blue_targetgroup_name" {
-  value = aws_lb_target_group.blue.name
+output "target_group_1_name" {
+  value = aws_lb_target_group.1.name
 }
 
-output "green_targetgroup_arn" {
-  value = aws_lb_target_group.green.arn
+output "target_group_2_arn" {
+  value = aws_lb_target_group.2.arn
 }
 
-output "green_targetgroup_name" {
-  value = aws_lb_target_group.green.name
+output "target_group_2_name" {
+  value = aws_lb_target_group.2.name
 }
